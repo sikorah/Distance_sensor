@@ -18,7 +18,7 @@ def main():
 
             pulse_duration = machine.time_pulse_us(echo_pin, 1, 30000) # Pomiar długości impulsu ECHO (okres proporcjonalny do zmierzonej odległości) z timeoutem 30ms
             if pulse_duration <= 0:
-                distance_cm = 0
+                disp.show_timeout_message(segments)
             else:
                 distance_cm = (pulse_duration / 58.7545) # Przeliczanie czasu trwania impulsu na odległość w cm (przy prędkości dźwięku ~343 m/s)
 

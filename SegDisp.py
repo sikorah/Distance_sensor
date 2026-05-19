@@ -26,6 +26,7 @@ LETTERS_PATTERNS = {
     'N': (0, 1, 1, 0, 1, 1, 0),
     'o': (0, 0, 1, 1, 1, 0, 1), 
     'n': (0, 0, 1, 0, 1, 0, 1),
+    'r': (0, 0, 0, 0, 1, 0, 1), 
 }
 
 
@@ -75,3 +76,6 @@ def show_startup_message(segments):
 
 def show_stop_message(segments):
     display_message(segments, 'OFF')
+
+def show_timeout_message(segments):
+    display_message(segments, "Err")
