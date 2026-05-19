@@ -12,19 +12,20 @@ def main():
         if start_stop_pin.value() == 1:
             disp.show_startup_message(segments)  # Wyświetl komunikat startowy
             time.sleep_ms(2000)  # Czekaj 2 sekundy aby zobaczyć komunikat
-            trig_pin.value(1)
-            time.sleep_us(15) # Sygnał wyzwalający mierzenie -- 15us (min.10us)
-            trig_pin.value(0)
+            while(start_stop_pin.value() == 1):
+                trig_pin.value(1)
+                time.sleep_us(15) # Sygnał wyzwalający mierzenie -- 15us (min.10us)
+                trig_pin.value(0)
 
-            pulse_duration = machine.time_pulse_us(echo_pin, 1, 30000) # Pomiar długości impulsu ECHO (okres proporcjonalny do zmierzonej odległości) z timeoutem 30ms
-            if pulse_duration <= 0:
-                disp.show_timeout_message(segments)
-            else:
-                distance_cm = (pulse_duration / 58.7545) # Przeliczanie czasu trwania impulsu na odległość w cm (przy prędkości dźwięku ~343 m/s)
+                pulse_duration = machine.time_pulse_us(echo_pin, 1, 30000) # Pomiar długości impulsu ECHO (okres proporcjonalny do zmierzonej odległości) z timeoutem 30ms
+                if pulse_duration <= 0:
+                    disp.show_timeout_message(segments)
+                else:
+                    distance_cm = (pulse_duration / 58.7545) # Przeliczanie czasu trwania impulsu na odległość w cm (przy prędkości dźwięku ~343 m/s)
 
-            disp.display_distance(segments, distance_cm)
-            
-            time.sleep_ms(60) 
+                disp.display_distance(segments, distance_cm)
+                
+                time.sleep_ms(60) 
 
         elif start_stop_pin.value() == 0:
             for seg in segments:
