@@ -1,8 +1,8 @@
 from machine import Pin
 
 def init_sensor_gpio():
-    ECHO_PIN = Pin(28, Pin.IN)
-    TRIG_PIN = Pin(27, Pin.OUT)
+    ECHO_PIN = Pin(27, Pin.IN)
+    TRIG_PIN = Pin(28, Pin.OUT)
     TRIG_PIN.value(0)
     return ECHO_PIN, TRIG_PIN
 

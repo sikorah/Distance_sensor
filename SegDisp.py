@@ -20,7 +20,12 @@ LETTERS_PATTERNS = {
     'D': (0, 1, 1, 1, 1, 0, 1),
     'E': (1, 0, 0, 1, 1, 1, 1),
     'F': (1, 0, 0, 0, 1, 1, 1),
-    'O': (1, 1, 1, 1, 1, 1, 0),
+    'O': (1, 1, 1, 1, 1, 1, 0), 
+    'S': (1, 0, 1, 1, 0, 1, 1),
+    'P': (1, 1, 0, 0, 1, 1, 1),
+    'N': (0, 1, 1, 0, 1, 1, 0),
+    'o': (0, 0, 1, 1, 1, 0, 1), 
+    'n': (0, 0, 1, 0, 1, 0, 1),
 }
 
 
@@ -30,12 +35,12 @@ def write_digit(pins, digit):
         pin.value(value)
 
 def write_letter(pins, letter):
-    pattern = LETTERS_PATTERNS.get(letter.upper(), (0, 0, 0, 0, 0, 0, 0))
+    pattern = LETTERS_PATTERNS.get(letter, LETTERS_PATTERNS.get(letter.upper(), (0, 0, 0, 0, 0, 0, 0)))
     for pin, value in zip(pins, pattern):
         pin.value(value)
 
 
-def display_number(segments, distance):
+def display_distance(segments, distance):
     try:
         number = int(distance)
     except (TypeError, ValueError):
@@ -55,9 +60,18 @@ def display_number(segments, distance):
     write_digit(segments[2], ones)
 
 def display_message(segments, message):
-    message = message.upper()[:3].ljust(3)
+    message = (message + "   ")[:3] 
     for i, char in enumerate(message):
-        if char.isdigit():
+        if char == ' ':
+            for pin in segments[i]:
+                pin.value(0)
+        elif char.isdigit():
             write_digit(segments[i], int(char))
         else:
             write_letter(segments[i], char)
+
+def show_startup_message(segments):
+    display_message(segments, 'on')
+
+def show_stop_message(segments):
+    display_message(segments, 'OFF')

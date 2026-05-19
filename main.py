@@ -1,30 +1,28 @@
-from machine import time_pulse_us
-import importlib
+import machine
+import SegDisp as disp
 import time
 import gpio_init as gpio
 
-disp = importlib.import_module('7_seg_disp')
-
 def main():
-    echo_pin, trig_pin = gpio.init_sensor_gpio()
-    start_stop_pin= gpio.init_start_stop_gpio()
-    segments = gpio.init_7_segment_gpio()
+    echo_pin, trig_pin = gpio.init_sensor_gpio() # Inicjalizacja GPIO dla czujnika ultradźwiękowego
+    start_stop_pin= gpio.init_start_stop_gpio() # Inicjalizacja GPIO dla przycisku start/stop
+    segments = gpio.init_7_segment_gpio() # Inicjalizacja GPIO dla wyświetlaczy 7-segmentowych
 
     while True:
         if start_stop_pin.value() == 1:
-            trig_pin.value(0)
-            time.sleep_us(2)
+            disp.show_startup_message(segments)  # Wyświetl komunikat startowy
+            time.sleep_ms(2000)  # Czekaj 2 sekundy aby zobaczyć komunikat
             trig_pin.value(1)
-            time.sleep_us(10)
+            time.sleep_us(15) # Sygnał wyzwalający mierzenie -- 15us (min.10us)
             trig_pin.value(0)
 
-            pulse_duration = time_pulse_us(echo_pin, 1, 30000)
+            pulse_duration = machine.time_pulse_us(echo_pin, 1, 30000) # Pomiar długości impulsu ECHO (okres proporcjonalny do zmierzonej odległości) z timeoutem 30ms
             if pulse_duration <= 0:
                 distance_cm = 0
             else:
-                distance_cm = int(pulse_duration / 58)
+                distance_cm = (pulse_duration / 58.7545) # Przeliczanie czasu trwania impulsu na odległość w cm (przy prędkości dźwięku ~343 m/s)
 
-            disp.display_number(segments, distance_cm)
+            disp.display_distance(segments, distance_cm)
             
             time.sleep_ms(60) 
 
@@ -32,6 +30,7 @@ def main():
             for seg in segments:
                 for pin in seg:
                     pin.value(0)
+            disp.show_stop_message(segments)
             time.sleep_ms(100) 
             
         else:
